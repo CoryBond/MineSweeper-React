@@ -3,105 +3,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
-import * as s from '../component-styles/component-styles.js';
+import Tile from './Tile.js';
 
 
-
-
-class Tile extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleOnContextMenu = this.handleOnContextMenu.bind(this);
-    this.dig = this.dig.bind(this);
-    this.flag = this.flag.bind(this);
-    this.state = {
-      gameComplete: false,
-      isFlaged: false,
-      hasExploded: false,
-      text: "nothing"
-    };
-    this.isClicked = false;
-  }
-
-  gameCompleted(){
-    this.setState({
-      gameComplete: true,
-    });
-  }
-
-  handleClick(e){
-    e.preventDefault();
-    this.dig();
-  }
-
-  handleOnContextMenu(e){
-    e.preventDefault();
-    this.flag();
-  }
-
-  dig(){
-    if(this.isClicked){
-      return;
-    }
-    this.isClicked = true;
-
-    if(this.props.isBomb){
-      this.setState({
-        text: "bomb",
-        gameComplete: true,
-        hasExploded: true
-      });
-      this.props.setGameOverState();
-      return true;
-    }else{
-      if(this.props.nearbyBombCount === 0){
-        this.setState({
-          counter: this.state.counter+1,
-          text: "blank " + this.state.counter
-        });
-        this.props.cascadeBlanks(this.props.x, this.props.y);
-      }else{
-        this.setState({
-          text: this.props.nearbyBombCount
-        });
-        this.props.decreaseClickedCounter(false);
-      }
-    }
-    return false;
-  }
-
-  flag(){
-    if(!this.state.isFlaged){
-      if(this.isClicked) return;
-      this.isClicked = true;
-      this.setState({
-        isFlaged: true,
-        text: "flag"
-      });
-      this.props.decreaseClickedCounter(true);
-    }
-    else
-    {
-      if(this.isClicked){
-        this.isClicked = false;
-        this.setState({
-          isFlaged: false,
-          text: "nothing"
-        });
-        this.props.increaseCounters();
-      }
-    }
-  }
-
-  render() {
-    return (
-      <button disabled={this.state.gameComplete} onClick={this.handleClick} onContextMenu={this.handleOnContextMenu}>
-        {this.state.text}
-      </button>
-    );
-  };
-};
 
 export default class GameBoard extends React.Component {
   constructor(props) {
@@ -180,6 +84,16 @@ export default class GameBoard extends React.Component {
       exploded = this.tileDigFuncs[x+1][y]();
     if(!exploded && this.tileDigFuncs[x][y+1])
       exploded = this.tileDigFuncs[x][y+1]();
+
+    //diagnols
+    if(!exploded && x !== 0 && y !== 0)
+      exploded = this.tileDigFuncs[x-1][y-1]();
+    if(!exploded && this.tileDigFuncs[x+1] && y !== 0)
+      exploded = this.tileDigFuncs[x+1][y-1]();
+    if(!exploded && x !== 0 && this.tileDigFuncs[x][y+1])
+      exploded = this.tileDigFuncs[x-1][y+1]();
+    if(!exploded && this.tileDigFuncs[x+1] && this.tileDigFuncs[x][y+1])
+      exploded = this.tileDigFuncs[x+1][y+1]();
   }
 
   setGameOverState(){
@@ -211,14 +125,28 @@ export default class GameBoard extends React.Component {
       this.bombs[row][column] = true;
 
       // Set Bomb Counts
-      if(row-1 >= 0)
-        this.nearbyBombCount[row-1][column]++;
-      if(column-1 >= 0)
-        this.nearbyBombCount[row][column-1]++;
-      if(row+1 < numRows)
-        this.nearbyBombCount[row+1][column]++;
-      if(column+1 < numColumns)
-        this.nearbyBombCount[row][column+1]++;
+      var nextRow = row+1;
+      var lastRow = row-1;
+      var lastColumn = column-1;
+      var nextColumn = column+1;
+      if(lastRow >= 0)
+        this.nearbyBombCount[lastRow][column]++;
+      if(lastColumn >= 0)
+        this.nearbyBombCount[row][lastColumn]++;
+      if(nextRow < numRows)
+        this.nearbyBombCount[nextRow][column]++;
+      if(nextColumn < numColumns)
+        this.nearbyBombCount[row][nextColumn]++;
+
+      //Diagnol Tiles
+      if(nextRow < numRows && nextColumn < numColumns)
+        this.nearbyBombCount[nextRow][nextColumn]++;
+      if(lastRow >= 0 && nextColumn < numColumns)
+        this.nearbyBombCount[lastRow][nextColumn]++;
+      if(nextRow < numRows && lastColumn >= 0)
+        this.nearbyBombCount[nextRow][lastColumn]++;
+      if(lastRow >= 0 && lastColumn >= 0)
+        this.nearbyBombCount[lastRow][lastColumn]++;
     }
   };
 
@@ -307,7 +235,3 @@ export default class GameBoard extends React.Component {
     );
   };
 };
-
-GameBoard.ROWS = 15;
-GameBoard.COLUMNS = 30;
-GameBoard.BOMBS = 2 ;

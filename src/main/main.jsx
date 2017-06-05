@@ -6,24 +6,23 @@ import ReactRouter from 'react-router';
 import { Router, Switch, Route } from 'react-router-dom';
 import history from '../js/history' 
 
+import { Provider } from "react-redux";
+import { store } from "../stores/store.js";
+
 import Home from '../pages/Home.jsx';
-import GameBoard from '../pages/GameBoard.jsx';
-
-
-
-//Starting the material javascript backend
+import GameBoardPage from '../pages/GameBoardPage.jsx';
 
 
 
 
-
-
-// Set Our Routes 
+// Set Our Routes and Redux Store
 ReactDOM.render(
-  <Router history={history}>
-      <Switch>
-          <Route exact path="/" component={Home}/>
-          <Route path="/game" component={GameBoard}/>
-      </Switch>
-  </Router>,
+    <Provider store={store}>
+        <Router history={history}>
+            <Switch>
+                <Route exact path="/" component={Home}/>
+                <Route path="/game" component={GameBoardPage}/>
+            </Switch>
+        </Router>
+    </Provider>,
 document.getElementById("main"));
