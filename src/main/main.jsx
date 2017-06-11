@@ -7,7 +7,7 @@ import { Router, Switch, Route } from 'react-router-dom';
 import history from '../js/history' 
 
 import { Provider } from "react-redux";
-import { store } from "../stores/store.js";
+import store from "../stores/store.js";
 
 import Home from '../pages/Home.jsx';
 import GameBoardPage from '../pages/GameBoardPage.jsx';

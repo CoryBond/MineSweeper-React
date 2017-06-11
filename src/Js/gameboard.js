@@ -3,57 +3,65 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
-import * as actions from '../actions.js';
-import { store } from '../stores.js';
+import * as actions from '../actions/actions.js';
 
-import Tile from './Tile.js';
+import tile from './tile.js';
 
-export default class gameboard {
-  constructor(props) {
+export default class gameboard {c
+  constructor(rows, columns, bombs) {
     this.headText = "Game Active";
     this.gameover = false;
-      // Technically shouldn't this be a "low score??"
-    this.highscore = 0;
-    this.score = 0;
     this.gameComplete = false,
     this.falgsCount = gameboard.BOMBS;
     this.tiles = [[]];
     this.bombs = [[]];
     this.nearbyBombCount = [[]];
     // Necessary Evil For Cascading
-    this.tileDigFuncs = [[]];
+    //this.tileDigFuncs = [[]];
     this.numberOfTilesClicked = 0;
-    this.numberOfTiles = gameboard.ROWS * gameboard.COLUMNS;
+    this.flagsCount = bombs;
+    this.numberOfTiles = rows * columns;
+    this.setBoardTiles(rows, columns, bombs);
   }
 
-  checkIfWon(){
-    if(this.numberOfTilesClicked === this.numberOfTiles && this.state.flagsCount === 0)
-      this.setWonState();
+  increaseClickedCounter(){
+    this.numberOfTilesClicked--;
+    this.flagsCount = this.flagsCount + 1
   }
 
   decreaseClickedCounter(clickFlag){
     this.numberOfTilesClicked++;
     if(clickFlag)
         this.flagsCount = this.flagsCount - 1
-  }
 
-  increaseCounters(){
-    this.numberOfTilesClicked--;
-    this.flagsCount = this.flagsCount + 1
+    this.checkIfWon();
   }
 
   setGameOverState(){
-    gameover = true;
-    headText = "Game Over!";
-    gameComplete = true;
-    //clearInterval(this.intervalId);
+    this.gameover = true;
+    this.headText = "Game Over!";
+    this.gameComplete = true;
+    this.tiles.map(tileRows =>
+      tileRows.map(tile =>
+        tile.setLost()
+      )
+    );
+  }
+
+  checkIfWon(){
+    if(this.numberOfTilesClicked == this.numberOfTiles && this.flagsCount == 0)
+      this.setWonState();
   }
 
   // Console log the winner state right now.
   setWonState(){
-    headText = "You WON!";
-    gameComplete = true;
-    //clearInterval(this.intervalId);
+    this.headText = "You WON!";
+    this.gameComplete = true;
+    this.tiles.map(tileRows =>
+      tileRows.map(tile =>
+        tile.setWon()
+      )
+    );
   }
   
   cascadeBlanks(x, y){
@@ -64,32 +72,42 @@ export default class gameboard {
   _cascadeBlanks(x, y){
     var exploded = false;
     if(x !== 0)
-      exploded = this.tileDigFuncs[x-1][y]();
+      exploded = this.tiles[x-1][y].dig();
     if(!exploded && y !== 0)
-      exploded = this.tileDigFuncs[x][y-1]();
-    if(!exploded && this.tileDigFuncs[x+1])
-      exploded = this.tileDigFuncs[x+1][y]();
-    if(!exploded && this.tileDigFuncs[x][y+1])
-      exploded = this.tileDigFuncs[x][y+1]();
+      exploded = this.tiles[x][y-1].dig();
+    if(!exploded && this.tiles[x+1])
+      exploded = this.tiles[x+1][y].dig();
+    if(!exploded && this.tiles[x][y+1])
+      exploded = this.tiles[x][y+1].dig();
 
     //diagnols
     if(!exploded && x !== 0 && y !== 0)
-      exploded = this.tileDigFuncs[x-1][y-1]();
-    if(!exploded && this.tileDigFuncs[x+1] && y !== 0)
-      exploded = this.tileDigFuncs[x+1][y-1]();
-    if(!exploded && x !== 0 && this.tileDigFuncs[x][y+1])
-      exploded = this.tileDigFuncs[x-1][y+1]();
-    if(!exploded && this.tileDigFuncs[x+1] && this.tileDigFuncs[x][y+1])
-      exploded = this.tileDigFuncs[x+1][y+1]();
+      exploded = this.tiles[x-1][y-1].dig();
+    if(!exploded && this.tiles[x+1] && y !== 0)
+      exploded = this.tiles[x+1][y-1].dig();
+    if(!exploded && x !== 0 && this.tiles[x][y+1])
+      exploded = this.tiles[x-1][y+1].dig();
+    if(!exploded && this.tiles[x+1] && this.tiles[x][y+1])
+      exploded = this.tiles[x+1][y+1].dig();
   }
+  
+  setBoardTiles(numRows,numColumns, bombs) {
+    var tempTiles = this.createTiles(numRows,numColumns);
 
-  setBombs(numBombs, numRows, numColumns) {
-    var bombLocations = this.getRandomUniqueArray(numBombs, numRows * numColumns);
+    this.setBombs(tempTiles, bombs, numRows, numColumns);
+
+    this.tiles = tempTiles;
+  };
+
+  setBombs(tiles, numBombs, numRows, numColumns) {
+    // Max number but with consideration that we are using an index.
+    var maxNum = numRows * numColumns;
+    var bombLocations = this.getRandomUniqueArray(numBombs, maxNum);
     for(var i = 0; i < bombLocations.length; i++){
       var bombLocation = bombLocations[i];
       var row = Math.floor(bombLocation / numColumns);
       var column = bombLocation % numColumns;
-      this.bombs[row][column] = true;
+      tiles[row][column].isBomb = true;
 
       // Set Bomb Counts
       var nextRow = row+1;
@@ -97,23 +115,23 @@ export default class gameboard {
       var lastColumn = column-1;
       var nextColumn = column+1;
       if(lastRow >= 0)
-        this.nearbyBombCount[lastRow][column]++;
+        tiles[lastRow][column].nearbyBombCount++;
       if(lastColumn >= 0)
-        this.nearbyBombCount[row][lastColumn]++;
+        tiles[row][lastColumn].nearbyBombCount++;
       if(nextRow < numRows)
-        this.nearbyBombCount[nextRow][column]++;
+        tiles[nextRow][column].nearbyBombCount++;
       if(nextColumn < numColumns)
-        this.nearbyBombCount[row][nextColumn]++;
+        tiles[row][nextColumn].nearbyBombCount++;
 
       //Diagnol Tiles
       if(nextRow < numRows && nextColumn < numColumns)
-        this.nearbyBombCount[nextRow][nextColumn]++;
+        tiles[nextRow][nextColumn].nearbyBombCount++;
       if(lastRow >= 0 && nextColumn < numColumns)
-        this.nearbyBombCount[lastRow][nextColumn]++;
+        tiles[lastRow][nextColumn].nearbyBombCount++;
       if(nextRow < numRows && lastColumn >= 0)
-        this.nearbyBombCount[nextRow][lastColumn]++;
+        tiles[nextRow][lastColumn].nearbyBombCount++;
       if(lastRow >= 0 && lastColumn >= 0)
-        this.nearbyBombCount[lastRow][lastColumn]++;
+        tiles[lastRow][lastColumn].nearbyBombCount++;
     }
   };
 
@@ -121,50 +139,37 @@ export default class gameboard {
   getRandomUniqueArray(num, max){
     var arr = []
     while(arr.length < num){
-        var randomnumber = Math.ceil(Math.random()*max)
+        var randomnumber = Math.floor(Math.random()*max)
         if(arr.indexOf(randomnumber) > -1) continue;
         arr[arr.length] = randomnumber;
     }
     return arr;
   }
 
-  setMatrixes(numRows,numColumns){
+  createTiles(numRows,numColumns){
     var tempTiles = [[]];
     for(var x = 0; x < numRows; x++){
       tempTiles[x] = [];
-      this.bombs[x] = [];
-      this.tileDigFuncs[x] = [];
-      this.nearbyBombCount[x] = [];
-      for(var y = 0; y < numColumns; y++){
-        this.nearbyBombCount[x][y] = 0;
-      }
+      //this.bombs[x] = [];
+      //this.tileDigFuncs[x] = [];
+      //this.nearbyBombCount[x] = [];
+      //for(var y = 0; y < numColumns; y++){
+      //  this.nearbyBombCount[x][y] = 0;
+      //}
     }
-
-    tiles = tempTiles;
-
-    return tempTiles;
-  }
-
-  setBoardTiles(numRows,numColumns) {
-    var tempTiles = this.setMatrixes(numRows,numColumns);
-
-    this.setBombs(gameboard.BOMBS, numRows, numColumns);
 
     for(var x = 0; x < numRows; x++)
       for(var y = 0; y < numColumns; y++)
         tempTiles[x][y] = this.createTile(x, y);
 
-    tiles = tempTiles;
-  };
+    return tempTiles;
+  }
 
   createTile(x, y){
-    var isBomb = false;
-    if(this.bombs[x] && this.bombs[x][y])
-      var isBomb = true;
-    return new Tile(isBomb, x, y, this.nearbyBombCount[x][y]);
+    return new tile(this, x, y);
   }
 };
 
-gameboard.ROWS = 15;
-gameboard.COLUMNS = 30;
-gameboard.BOMBS = 20;
+gameboard.DEFAULT_ROWS = 2;
+gameboard.DEFAULT_COLUMNS = 2;
+gameboard.DEFAULT_BOMBS = 4;

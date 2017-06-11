@@ -3,67 +3,71 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
-export default class Tile extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleOnContextMenu = this.handleOnContextMenu.bind(this);
-    this.dig = this.dig.bind(this);
-    this.flag = this.flag.bind(this);
-    this.state = {
-      gameComplete: false,
-      isFlaged: false,
-      hasExploded: false,
-      text: "nothing"
-    };
+import * as actions from '../actions/actions.js';
+
+export default class tile {
+  constructor(gameboard, x, y) {
+    this.gameboard = gameboard;
+    this.x = x;
+    this.y = y;
+    this.gameComplete = false;
+    this.isFlaged = false;
+    this.hasExploded = false;
+    this.text = "nothing";
     this.isClicked = false;
+    this.isBomb = false;
+    this.nearbyBombCount = 0;
   }
 
-  componentDidMount(){
+  /*componentDidMount(){
     store.subscribe(() => {
         console.log("store changed", store.getState());
     });
+  }*/
+
+  setWon(){
+    this.gameComplete = true;
   }
 
+  setLost(){
+    this.gameComplete = true;
+    if(this.isBomb){
+      this.text = "bomb";
+      this.hasExploded = true;
+    }
+  }
+
+  // Returns if exploded or not because we dug up a bomb or not.
   dig(){
     if(this.isClicked){
       return;
     }
     this.isClicked = true;
 
-    if(this.props.isBomb){
-      this.setState({
-        text: "bomb",
-        gameComplete: true,
-        hasExploded: true
-      });
-      this.props.setGameOverState();
-      return true;
+    if(this.isBomb){
+        this.setLost();
+        this.gameboard.setGameOverState();
+        return this.hasExploded;
     }else{
-      if(this.props.nearbyBombCount === 0){
-        this.setState({
-          counter: this.state.counter+1,
-          text: "blank " + this.state.counter
-        });
-        this.props.cascadeBlanks(this.props.x, this.props.y);
+      if(this.nearbyBombCount === 0){
+          //counter: this.state.counter+1,
+        this.text = "blank "; /*+ this.state.counter*/
+        this.gameboard.cascadeBlanks(this.x,this.y);
       }else{
-        this.setState({
-          text: this.props.nearbyBombCount
-        });
-        this.props.decreaseClickedCounter(false);
+        this.text = this.nearbyBombCount;
+        this.gameboard.decreaseClickedCounter(false);
       }
     }
     return false;
   }
 
   flag(){
-    if(!this.state.isFlaged){
+    if(!this.isFlaged){
       if(this.isClicked) return;
       this.isClicked = true;
-        this.isFlaged = true,
-        this.text = "flag";
-      this.props.decreaseClickedCounter(true);
-      dispatch()
+      this.isFlaged = true,
+      this.text = "flag";
+      this.gameboard.decreaseClickedCounter(true);
     }
     else
     {
@@ -71,7 +75,7 @@ export default class Tile extends React.Component {
         this.isClicked = false;
         this.isFlaged = false;
         this.text = "nothing";
-        this.props.increaseCounters();
+        this.gameboard.increaseClickedCounter();
       }
     }
   }

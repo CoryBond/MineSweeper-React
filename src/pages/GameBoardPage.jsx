@@ -5,7 +5,9 @@ import styled from 'styled-components';
 
 import * as s from '../component-styles/component-styles.js';
 
-import GameBoard from '../components/GameBoard.js';
+import GameBoard from '../components/GameBoard.jsx';
+
+
 
 export default class GameBoardPage extends React.Component {
   render() {
