@@ -6,23 +6,17 @@ export function RESET_BOARD(){
     }
 }
 
-/*export function CASCADE_BLANKS(x, y){
+export function PRE_FLAG(){
     return{
-        type: "CASCADE_BLANKS"
+        type: "PRE_FLAG"
     }
 }
 
-export function INCREASE_CLICKED(){
+export function PRE_DIG(){
     return{
-        type: "INCREASE_CLICKED"
+        type: "PRE_DIG"
     }
 }
-
-export function DECREASE_CLICKED(){
-    return{
-        type: "DECREASE_CLICKED"
-    }
-}*/
 
 export function FLAGED(x, y){
     return{

@@ -8,11 +8,14 @@ import { connect } from "react-redux";
 
 import Tile from './Tile.jsx';
 
+import * as s from '../component-styles/component-styles.js';
+
+import head from '../resources/head-images/happy.jpg';
 
 @connect((store) => {
   var gameboard = store.gameBoardReducer.gameboard;
   return {
-    headText: gameboard.headText,
+    headSource: gameboard.headSource,
     gameover: gameboard.gameover,
     gameComplete: gameboard.gameComplete,
     flagsCount: gameboard.flagsCount,
@@ -51,26 +54,26 @@ export default class GameBoard extends React.Component {
 
   render() {
     return (
-      <table>
-        <thead>
-          <tr>
-            <th>Flags: {this.props.flagsCount}</th>
-            <th>{this.props.headText}</th>
-            <th>Score: {this.state.score}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.props.tiles.map((tileRows, i) =>
-            <tr key={i}>
-              {tileRows.map((tile, i) =>
-                <td key={i}>
-                  {this.createTile(tile.x, tile.y)}
-                </td>
-              )}
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <s.Gameboard>
+        <s.MineSweepHeaderBar>
+          <s.MineSweepHeaderFlag>Flags: {this.props.flagsCount}</s.MineSweepHeaderFlag>
+          <s.MineSweepHeader><s.MineSweepHead src={'../resources/head-images/' + this.props.headSource}/></s.MineSweepHeader>
+          <s.MineSweepHeader>Score: {this.state.score}</s.MineSweepHeader>
+        </s.MineSweepHeaderBar>
+        <s.GameboardTable>
+          <tbody>
+            {this.props.tiles.map((tileRows, i) =>
+              <tr key={i}>
+                {tileRows.map((tile, i) =>
+                  <td key={i}>
+                    {this.createTile(tile.x, tile.y)}
+                  </td>
+                )}
+              </tr>
+            )}
+          </tbody>
+        </s.GameboardTable>
+      </s.Gameboard>
     );
   };
 };

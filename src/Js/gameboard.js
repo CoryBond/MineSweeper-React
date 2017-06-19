@@ -10,6 +10,7 @@ import tile from './tile.js';
 export default class gameboard {c
   constructor(rows, columns, bombs) {
     this.headText = "Game Active";
+    this.headSource = "happy.jpg";
     this.gameover = false;
     this.gameComplete = false,
     this.falgsCount = gameboard.BOMBS;
@@ -37,9 +38,26 @@ export default class gameboard {c
     this.checkIfWon();
   }
 
+  setPreDig(){
+    this.headSource = "scared.jpg";
+  }
+
+  setPreFlag(){
+    this.headSource = "anticipating.jpg";
+  }
+
+  setRelieved(){
+    this.headSource = "relieved.jpg";
+  }
+
+  setNormal(){
+    this.headSource = "happy.jpg";
+  }
+
   setGameOverState(){
     this.gameover = true;
     this.headText = "Game Over!";
+    this.headSource = "dead.jpg";
     this.gameComplete = true;
     this.tiles.map(tileRows =>
       tileRows.map(tile =>
@@ -56,6 +74,7 @@ export default class gameboard {c
   // Console log the winner state right now.
   setWonState(){
     this.headText = "You WON!";
+    this.headSource = "victory!.jpg";
     this.gameComplete = true;
     this.tiles.map(tileRows =>
       tileRows.map(tile =>
@@ -150,12 +169,6 @@ export default class gameboard {c
     var tempTiles = [[]];
     for(var x = 0; x < numRows; x++){
       tempTiles[x] = [];
-      //this.bombs[x] = [];
-      //this.tileDigFuncs[x] = [];
-      //this.nearbyBombCount[x] = [];
-      //for(var y = 0; y < numColumns; y++){
-      //  this.nearbyBombCount[x][y] = 0;
-      //}
     }
 
     for(var x = 0; x < numRows; x++)
@@ -170,6 +183,6 @@ export default class gameboard {c
   }
 };
 
-gameboard.DEFAULT_ROWS = 2;
-gameboard.DEFAULT_COLUMNS = 2;
-gameboard.DEFAULT_BOMBS = 4;
+gameboard.DEFAULT_ROWS = 15;
+gameboard.DEFAULT_COLUMNS = 30;
+gameboard.DEFAULT_BOMBS = 50;

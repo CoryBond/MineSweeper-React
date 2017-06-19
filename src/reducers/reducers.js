@@ -8,18 +8,13 @@ var defaultGameboard = new gameboard(rows, columns, bombs);
 export const gameBoardReducer = function(state = {gameboard: defaultGameboard}, action) {
     const newState = {...state};
     switch(action.type) {
-        /*case "CASCADE_BLANKS":
+        case "PRE_DIG":
+            newState.gameboard.setPreDig();
             break;
-        case "INCREASE_CLICKED":
+        case "PRE_FLAG":
+            newState.gameboard.setPreFlag();
             break;
-        case "DECREASE_CLICKED":
-            break;
-        case "WON":
-            break;
-        case "LOST":
-            break;*/
     };
-    
     return newState;
 };
 

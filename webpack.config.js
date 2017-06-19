@@ -24,16 +24,8 @@ var config = {
         loader: "style-loader!css-loader" 
       },
       { 
-        test: /\.png$/, 
-        loader: "url-loader?limit=100000" 
-      },
-      { 
-        test: /\.jpg$/, 
-        loader: "file-loader" 
-      },
-      { 
-        test: /\.png$/, 
-        loader: "file-loader" 
+        test: /\.(gif|png|jpe?g)$/, 
+        loader: "file-loader?name=[path][name].[ext]!extract-loader!html-loader"
       },
       { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader" },
       { test: /\.(woff|woff2)$/, loader:"url-loader?prefix=font/&limit=5000" },

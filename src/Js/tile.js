@@ -13,7 +13,7 @@ export default class tile {
     this.gameComplete = false;
     this.isFlaged = false;
     this.hasExploded = false;
-    this.text = "nothing";
+    this.text = "n";
     this.isClicked = false;
     this.isBomb = false;
     this.nearbyBombCount = 0;
@@ -32,7 +32,7 @@ export default class tile {
   setLost(){
     this.gameComplete = true;
     if(this.isBomb){
-      this.text = "bomb";
+      this.text = "b";
       this.hasExploded = true;
     }
   }
@@ -49,9 +49,10 @@ export default class tile {
         this.gameboard.setGameOverState();
         return this.hasExploded;
     }else{
+      this.gameboard.setRelieved();
       if(this.nearbyBombCount === 0){
           //counter: this.state.counter+1,
-        this.text = "blank "; /*+ this.state.counter*/
+        this.text = ""; /*+ this.state.counter*/
         this.gameboard.cascadeBlanks(this.x,this.y);
       }else{
         this.text = this.nearbyBombCount;
@@ -66,7 +67,7 @@ export default class tile {
       if(this.isClicked) return;
       this.isClicked = true;
       this.isFlaged = true,
-      this.text = "flag";
+      this.text = "f";
       this.gameboard.decreaseClickedCounter(true);
     }
     else
@@ -74,10 +75,11 @@ export default class tile {
       if(this.isClicked){
         this.isClicked = false;
         this.isFlaged = false;
-        this.text = "nothing";
+        this.text = "n";
         this.gameboard.increaseClickedCounter();
       }
     }
+    this.gameboard.setNormal();
   }
 
   render() {
