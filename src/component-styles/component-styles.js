@@ -57,8 +57,8 @@ export const TileButton = styled.button`
                         props.children == "7" ? 'black' : 
                         props.children == "8" ? 'red' : 
                         ''};
-    background: ${(props) => props.children === "f" ? 'url(../resources/tiles/Red-Flag.png)' : 
-                             props.children === "b" ? 'url(../resources/tiles/bomb.png)' : 
+    background: ${(props) => props.children === "f" ? 'url(./src/resources/tiles/Red-Flag.png)' : 
+                             props.children === "b" ? 'url(./src/resources/tiles/bomb.png)' : 
                              props.children === "" ? 'darkgray' :
                              ''};
     background-size: 20px 20px;

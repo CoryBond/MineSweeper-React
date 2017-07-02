@@ -12,16 +12,15 @@ import store from "../stores/store.js";
 import Home from '../pages/Home.jsx';
 import GameBoardPage from '../pages/GameBoardPage.jsx';
 
-
-
+console.log("INSIDE BUNDLE JS!");
 
 // Set Our Routes and Redux Store
 ReactDOM.render(
     <Provider store={store}>
         <Router history={history}>
             <Switch>
-                <Route exact path="/" component={Home}/>
-                <Route path="/game" component={GameBoardPage}/>
+                <Route exact path={"/MineSweeper-React-Redux/"} component={Home}/>
+                <Route path="/MineSweeper-React-Redux/game" component={GameBoardPage}/>
             </Switch>
         </Router>
     </Provider>,

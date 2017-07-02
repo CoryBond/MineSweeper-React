@@ -7,7 +7,7 @@ import * as s from '../component-styles/component-styles.js';
 
 import GameBoard from '../components/GameBoard.jsx';
 
-
+console.log("GAMEBOARD PAGE HERE");
 
 export default class GameBoardPage extends React.Component {
   render() {

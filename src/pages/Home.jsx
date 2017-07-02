@@ -8,7 +8,7 @@ import history from '../js/history'
 
 export default class Home extends React.Component {
   routeFromHome(e){
-    history.push("/game");
+    history.push("/MineSweeper-React-Redux/game");
   }
 
   render() {

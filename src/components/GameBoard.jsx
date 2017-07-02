@@ -10,8 +10,6 @@ import Tile from './Tile.jsx';
 
 import * as s from '../component-styles/component-styles.js';
 
-import head from '../resources/head-images/happy.jpg';
-
 @connect((store) => {
   var gameboard = store.gameBoardReducer.gameboard;
   return {
@@ -57,7 +55,7 @@ export default class GameBoard extends React.Component {
       <s.Gameboard>
         <s.MineSweepHeaderBar>
           <s.MineSweepHeaderFlag>Flags: {this.props.flagsCount}</s.MineSweepHeaderFlag>
-          <s.MineSweepHeader><s.MineSweepHead src={'../resources/head-images/' + this.props.headSource}/></s.MineSweepHeader>
+          <s.MineSweepHeader><s.MineSweepHead src={'./src/resources/head-images/' + this.props.headSource + '.jpg'}/></s.MineSweepHeader>
           <s.MineSweepHeader>Score: {this.state.score}</s.MineSweepHeader>
         </s.MineSweepHeaderBar>
         <s.GameboardTable>

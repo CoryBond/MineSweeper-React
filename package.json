@@ -4,7 +4,8 @@
   "description": "A POC react and webpack project for MINESWEEPER!",
   "scripts": {
     "dev": "webpack -d --watch",
-    "build": "webpack -p",
+    "build:dev": "webpack --env=dev --progress --profile --colors",
+    "build:dist": "webpack --env=prod --progress --profile --colors",
     "start": "webpack-dev-server --watch-poll --content-base --history-api-fallback"
   },
   "author": "",

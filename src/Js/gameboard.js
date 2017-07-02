@@ -10,7 +10,7 @@ import tile from './tile.js';
 export default class gameboard {c
   constructor(rows, columns, bombs) {
     this.headText = "Game Active";
-    this.headSource = "happy.jpg";
+    this.headSource = "happy";
     this.gameover = false;
     this.gameComplete = false,
     this.falgsCount = gameboard.BOMBS;
@@ -39,25 +39,25 @@ export default class gameboard {c
   }
 
   setPreDig(){
-    this.headSource = "scared.jpg";
+    this.headSource = "scared";
   }
 
   setPreFlag(){
-    this.headSource = "anticipating.jpg";
+    this.headSource = "anticipating";
   }
 
   setRelieved(){
-    this.headSource = "relieved.jpg";
+    this.headSource = "relieved";
   }
 
   setNormal(){
-    this.headSource = "happy.jpg";
+    this.headSource = "happy";
   }
 
   setGameOverState(){
     this.gameover = true;
     this.headText = "Game Over!";
-    this.headSource = "dead.jpg";
+    this.headSource = "dead";
     this.gameComplete = true;
     this.tiles.map(tileRows =>
       tileRows.map(tile =>
@@ -74,7 +74,7 @@ export default class gameboard {c
   // Console log the winner state right now.
   setWonState(){
     this.headText = "You WON!";
-    this.headSource = "victory!.jpg";
+    this.headSource = "victory!";
     this.gameComplete = true;
     this.tiles.map(tileRows =>
       tileRows.map(tile =>

@@ -1,11 +1,11 @@
 var path    = require('path');
 var webpack = require('webpack');
 
-var BUILD_DIR = path.resolve(__dirname, 'src/build');
-var APP_DIR = path.resolve(__dirname, 'src');
+var BUILD_DIR = path.resolve(__dirname, 'build');
+var APP_DIR = path.resolve(__dirname, '');
 
 var config = {
-  entry: [ APP_DIR + '/main/main.jsx' ],
+  entry: [ APP_DIR + '/src/main/main.jsx' ],
   output: {
     path: BUILD_DIR,
     publicPath: '/build',
